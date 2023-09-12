@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Clicker</title>
+    <!-- Include Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+    <!-- Replace with your Firebase configuration -->
+    <script>
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+</head>
+<body>
+    <h1>Welcome to the Button Clicker</h1>
+    <p>Enter your name:</p>
+    <input type="text" id="nameInput">
+    <button id="startButton" onclick="startGame()">Start Game</button>
+    
+    <div id="buttonContainer">
+        <!-- Buttons will be added here -->
+    </div>
+
+    <script>
+        let playerName;
+        const buttonNames = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank"];
+
+        function startGame() {
+            playerName = document.getElementById("nameInput").value.toLowerCase();
+            document.getElementById("nameInput").disabled = true;
+            document.getElementById("startButton").disabled = true;
+
+            createButtons();
+        }
+
+        function createButtons() {
+            const buttonContainer = document.getElementById("buttonContainer");
+
+            // Clear any existing buttons
+            buttonContainer.innerHTML = '';
+
+            // Create 6 buttons with different names
+            for (let i = 0; i < buttonNames.length; i++) {
+                const button = document.createElement("button");
+                button.className = "button";
+                button.innerText = buttonNames[i];
+                button.style.backgroundColor = "red";
+                button.addEventListener("click", function() {
+                    if (playerName === button.innerText.toLowerCase()) {
+                        alert("You've been pinged by " + button.innerText);
+                        // Store button click data in Firebase
+                        recordButtonClick(playerName, button.innerText);
+                    }
+                });
+                buttonContainer.appendChild(button);
+            }
+        }
+
+        // Function to record button click data in Firebase
+        function recordButtonClick(player, button) {
+            const database = firebase.database();
+            const clicksRef = database.ref("buttonClicks");
+
+            // Push the button click data to Firebase
+            clicksRef.push({
+                playerName: player,
+                buttonName: button,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+    </script>
+</body>
+</html>
