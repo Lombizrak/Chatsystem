@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatsystem</title>
+    <!-- Include Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js"></script>
+    <!-- Replace with your Firebase configuration -->
+    <script>
+		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		const firebaseConfig = {
+		  apiKey: "AIzaSyDdhRwmxQUMjWuUP_MFxi8B3H8l5rHdgi0",
+		  authDomain: "chatsystem-2.firebaseapp.com",
+		  projectId: "chatsystem-2",
+		  storageBucket: "chatsystem-2.appspot.com",
+		  messagingSenderId: "45015881217",
+		  appId: "1:45015881217:web:49ca3ad16338b119cd9200",
+		  measurementId: "G-YQR2314F07"
+		};
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+</head>
+<body>
+    <h1>Chatsystem</h1>
+    <p>Bitte geben Sie Ihren Namen ein:</p>
+    <input type="text" id="nameInput">
+    <button id="startButton" onclick="startGame()">Beitreten</button>
+    
+    <div id="buttonContainer">
+        <!-- Buttons will be added here -->
+    </div>
+
+    <script>
+        let playerName;
+        const buttonNames = ["Alice", "Bob", "Charlie", "David", "Eve", "Fione"];
+
+        function startGame() {
+            playerName = document.getElementById("nameInput").value.toLowerCase();
+            document.getElementById("nameInput").disabled = true;
+            document.getElementById("startButton").disabled = true;
+
+            createButtons();
+        }
+
+        function createButtons() {
+            const buttonContainer = document.getElementById("buttonContainer");
+
+            // Clear any existing buttons
+            buttonContainer.innerHTML = '';
+
+            // Create 6 buttons with different names
+            for (let i = 0; i < buttonNames.length; i++) {
+                const button = document.createElement("button");
+                button.className = "button";
+                button.innerText = buttonNames[i];
+                button.style.backgroundColor = "red";
+                button.addEventListener("click", function() {
+                    if (playerName === button.innerText.toLowerCase()) {
+                        alert("You've been pinged by " + button.innerText);
+                        // Store button click data in Firebase
+                        recordButtonClick(playerName, button.innerText);
+                    }
+                });
+                buttonContainer.appendChild(button);
+            }
+        }
+
+        // Function to record button click data in Firebase
+        function recordButtonClick(player, button) {
+            const database = firebase.database();
+            const clicksRef = database.ref("buttonClicks");
+
+            // Push the button click data to Firebase
+            clicksRef.push({
+                playerName: player,
+                buttonName: button,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+    </script>
+</body>
+</html>
