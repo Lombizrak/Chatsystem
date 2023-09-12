@@ -58,7 +58,7 @@
                 button.style.backgroundColor = "red";
                 button.addEventListener("click", function() {
                     if (playerName === button.innerText.toLowerCase()) {
-                        alert("You've been pinged by " + button.innerText);
+                        alert("Du wurdest angepingt von: " + button.innerText);
                         // Store button click data in Firebase
                         recordButtonClick(playerName, button.innerText);
                     }
